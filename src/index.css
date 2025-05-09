@@ -1,0 +1,139 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 196 100% 49%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 223 47% 20%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 25.4%;
+    --input: 214.3 31.8% 25.4%;
+    --ring: 196 100% 49%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-game-deep-blue text-foreground overflow-x-hidden;
+    background-image: radial-gradient(circle at center, rgba(10, 17, 40, 0.8) 0%, rgba(7, 13, 31, 1) 70%);
+    background-size: 100% 100%;
+    background-attachment: fixed;
+  }
+}
+
+.game-container {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50l50 25v-50L50 0 0 25v50z' fill='%230a1128' fill-opacity='0.1'/%3E%3C/svg%3E");
+  background-size: 30px 30px;
+}
+
+.tech-circle {
+  background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23008CCD' fill-opacity='0.1'%3E%3Cpath d='M800 400A400 400 0 010 400a400 400 0 01800 0zm-83.3 0a316.7 316.7 0 10-633.4 0 316.7 316.7 0 00633.4 0zm-83.4 0a233.3 233.3 0 10-466.6 0 233.3 233.3 0 00466.6 0zm-83.3 0a150 150 0 10-300 0 150 150 0 00300 0zm-83.3 0a66.7 66.7 0 10-133.4 0 66.7 66.7 0 00133.4 0z'/%3E%3C/g%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.glowing-border {
+  box-shadow: 0 0 15px rgba(0, 166, 251, 0.5);
+}
+
+.fraud-gradient {
+  background: linear-gradient(to right, #FF124F, #FF0A47);
+}
+
+.safe-gradient {
+  background: linear-gradient(to right, #00F260, #0575E6);
+}
+
+.card-shadow {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    rgba(255, 255, 255, 0) 0%, 
+    rgba(255, 255, 255, 0) 45%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0) 55%, 
+    rgba(255, 255, 255, 0) 100%);
+  background-size: 300% 300%;
+  animation: shine 3s ease infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 100% 100%;
+  }
+  50% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Add vertical swipe animations */
+@keyframes card-swipe-up {
+  0% { transform: translateY(0) rotate(0); }
+  100% { transform: translateY(-150%) rotate(10deg); }
+}
+
+@keyframes card-swipe-down {
+  0% { transform: translateY(0) rotate(0); }
+  100% { transform: translateY(150%) rotate(-10deg); }
+}
+
+.animate-card-swipe-up {
+  animation: card-swipe-up 0.5s forwards;
+}
+
+.animate-card-swipe-down {
+  animation: card-swipe-down 0.5s forwards;
+}
+
+/* Add glow animations for safe/fraud feedback */
+.safe-glow {
+  box-shadow: 0 0 15px rgba(0, 242, 96, 0.7);
+  border: 2px solid #00F260;
+  transition: all 0.3s ease;
+}
+
+.fraud-glow {
+  box-shadow: 0 0 15px rgba(255, 18, 79, 0.7);
+  border: 2px solid #FF124F;
+  transition: all 0.3s ease;
+}
