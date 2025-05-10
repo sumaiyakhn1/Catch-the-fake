@@ -1,5 +1,8 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,13 +17,33 @@ const Auth = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder for Firebase auth
-    console.log("Form submitted:", { isLogin, name, email, phone, password });
-    // Redirect to game page (temporarily for demo)
-    window.location.href = "/game";
+    setError(null);
+
+    if (!isLogin && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      if (isLogin) {
+        // Login
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        // Signup
+        await createUserWithEmailAndPassword(auth, email, password);
+        // Optionally: Save name/phone to Firestore here
+      }
+
+      navigate("/game");
+    } catch (err: any) {
+      setError(err.message || "Authentication failed");
+    }
   };
 
   return (
@@ -41,32 +64,53 @@ const Auth = () => {
           <h2 className="text-xl font-bold text-center mb-6">
             {isLogin ? "Log In" : "Register yourself"}
           </h2>
-          
+
+          {error && (
+            <div className="text-sm text-red-500 text-center mb-4">{error}</div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium">
-                  Name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10 bg-background/60 focus:bg-background/80 transition-colors"
-                    placeholder="Enter your name"
-                    required={!isLogin}
-                  />
+              <>
+                {/* Name Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-medium">Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-10 bg-background/60 focus:bg-background/80 transition-colors"
+                      placeholder="Enter your name"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+
+                {/* Phone Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-medium">Phone No.</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="pl-10 bg-background/60 focus:bg-background/80 transition-colors"
+                      placeholder="+1 234 567 8901"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
             )}
-            
+
+            {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email ID
-              </Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email ID</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
@@ -80,27 +124,8 @@ const Auth = () => {
                 />
               </div>
             </div>
-            
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-medium">
-                  Phone No.
-                </Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="pl-10 bg-background/60 focus:bg-background/80 transition-colors"
-                    placeholder="+1 234 567 8901"
-                    required={!isLogin}
-                  />
-                </div>
-              </div>
-            )}
-            
+
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium">
                 {isLogin ? "Password" : "Enter Password"}
@@ -118,12 +143,10 @@ const Auth = () => {
                 />
               </div>
             </div>
-            
+
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                  Confirm Password
-                </Label>
+                <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
@@ -133,12 +156,13 @@ const Auth = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pl-10 bg-background/60 focus:bg-background/80 transition-colors"
                     placeholder="••••••••"
-                    required={!isLogin}
+                    required
                   />
                 </div>
               </div>
             )}
-            
+
+            {/* Submit Button */}
             <div className="pt-4">
               <GameButton type="submit" className="w-full" size="lg">
                 {isLogin ? (
@@ -151,7 +175,7 @@ const Auth = () => {
               </GameButton>
             </div>
           </form>
-          
+
           <div className="mt-6 text-center text-sm">
             <p className="text-muted-foreground">
               {isLogin ? "Don't have an account?" : "Already have an account?"}

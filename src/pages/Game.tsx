@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import GameHeader from "@/components/GameHeader";
 import GameCard from "@/components/GameCard";
 import TechCircle from "@/components/TechCircle";
-import { Shield, ShieldCheck, ShieldX, ArrowUp, ArrowDown } from "lucide-react";
+import { ShieldCheck, ArrowUp, ArrowDown } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
 // Mock data with realistic fraud messages
@@ -52,14 +51,10 @@ const Game = () => {
   const handleCardAction = (action: "safe" | "fraud") => {
     const currentCard = cards[currentCardIndex];
     const isFraudChoice = action === "fraud";
-    
-    // Set swipe direction for visual feedback
     setSwipeDirection(isFraudChoice ? "down" : "up");
-    
-    // Check if the user made the correct choice
+
     const isCorrect = currentCard.isFraud === isFraudChoice;
-    
-    // Update score
+
     if (isCorrect) {
       setScore(prev => prev + 10);
       toast({
@@ -74,25 +69,20 @@ const Game = () => {
         variant: "destructive",
       });
     }
-    
-    // Reset swipe direction after a delay
+
     setTimeout(() => setSwipeDirection(null), 800);
-    
-    // Move to next card or end game
+
     if (currentCardIndex < cards.length - 1) {
       setCurrentCardIndex(prev => prev + 1);
     } else {
       setGameOver(true);
     }
   };
-  
-  // Handlers for safe/fraud actions
+
   const handleFraudAction = () => handleCardAction("fraud");
   const handleSafeAction = () => handleCardAction("safe");
-  
-  // Restart game
+
   const restartGame = () => {
-    // Shuffle cards for a new game
     const shuffledCards = [...mockCards].sort(() => Math.random() - 0.5);
     setCards(shuffledCards);
     setCurrentCardIndex(0);
@@ -105,18 +95,12 @@ const Game = () => {
     restartGame();
   }, []);
 
-  // Key handlers for desktop play
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (gameOver) return;
-      
-      if (e.key === "ArrowDown") {
-        handleFraudAction();
-      } else if (e.key === "ArrowUp") {
-        handleSafeAction();
-      }
+      if (e.key === "ArrowDown") handleFraudAction();
+      if (e.key === "ArrowUp") handleSafeAction();
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentCardIndex, gameOver]);
@@ -124,12 +108,12 @@ const Game = () => {
   return (
     <div className="min-h-screen w-full flex flex-col game-container">
       <GameHeader currentScore={score} />
-      
+
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
           <TechCircle className="w-[80vh] h-[80vh] opacity-20" />
         </div>
-        
+
         <div className="relative z-10 w-full max-w-md flex-1 flex flex-col items-center justify-center">
           {gameOver ? (
             <div className="bg-card/60 backdrop-blur-md rounded-2xl p-8 text-center animate-slide-in max-w-sm w-full glowing-border border border-border/50">
@@ -147,7 +131,7 @@ const Game = () => {
             <>
               <div className="mb-6 text-center">
                 <h2 className="text-xl font-bold mb-4">CATCH THE FAKE</h2>
-                
+
                 <div className={cn(
                   "max-w-xs mx-auto bg-card/60 backdrop-blur-md px-5 py-3 rounded-full border transition-all duration-300",
                   swipeDirection === "up" ? "border-game-safe shadow-[0_0_15px_rgba(0,242,96,0.7)]" : "border-border/50"
@@ -157,7 +141,7 @@ const Game = () => {
                     <span className="text-sm">Swipe <span className="text-game-safe">UP</span> for Safe</span>
                   </div>
                 </div>
-                
+
                 <div className={cn(
                   "max-w-xs mx-auto bg-card/60 backdrop-blur-md px-5 py-3 rounded-full border mt-2 transition-all duration-300",
                   swipeDirection === "down" ? "border-game-fraud shadow-[0_0_15px_rgba(255,18,79,0.7)]" : "border-border/50"
@@ -168,7 +152,7 @@ const Game = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="relative w-full aspect-[3/5] max-w-sm mb-8">
                 {cards.map((card, index) => (
                   <div 
@@ -200,7 +184,7 @@ const Game = () => {
                       </div>
                     )}
                     <GameCard 
-                      imageUrl="transparent"
+                      imageUrl={card.imageUrl}
                       isActive={index === currentCardIndex}
                       onSwipeUp={handleSafeAction}
                       onSwipeDown={handleFraudAction}
@@ -208,7 +192,7 @@ const Game = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="text-center mb-4">
                 {currentCardIndex < cards.length && swipeDirection === null && (
                   <p className="text-sm text-muted-foreground">
