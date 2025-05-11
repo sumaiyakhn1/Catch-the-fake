@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import GameHeader from "@/components/GameHeader";
 import TechCircle from "@/components/TechCircle";
+import { auth } from "@/lib/firebase";
+import { saveScore, getUserBestScore } from "@/lib/saveScore";
 
 const mockCards = [
   { id: 1, isFraud: true, imageUrl: "/assets/img1.jpg" },
@@ -14,9 +16,11 @@ const mockCards = [
   { id: 6, isFraud: false, imageUrl: "/assets/img6.jpeg" },
 ];
 
+
 const Game = () => {
   const [cards, setCards] = useState([...mockCards]);
   const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState<number | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const { toast } = useToast();
 
@@ -29,9 +33,16 @@ const Game = () => {
 
     if (correct) {
       setScore((prev) => prev + 10);
-      toast({ title: "Correct!", description: "+10 points", variant: "default" });
+      toast({
+        title: "Correct!",
+        description: `+10 points! ${guessedFraud ? "That was a fraud attempt." : "That was safe content."}`,
+      });
     } else {
-      toast({ title: "Wrong!", description: "Incorrect choice", variant: "destructive" });
+      toast({
+        title: "Wrong!",
+        description: `${guessedFraud ? "That was safe content." : "That was a fraud attempt."}`,
+        variant: "destructive",
+      });
     }
 
     const nextCards = cards.slice(1);
@@ -44,6 +55,22 @@ const Game = () => {
     setScore(0);
     setGameOver(false);
   };
+
+  useEffect(() => {
+    const fetchBestScore = async () => {
+      if (auth.currentUser) {
+        const best = await getUserBestScore(auth.currentUser);
+        setBestScore(best);
+      }
+    };
+    fetchBestScore();
+  }, []);
+
+  useEffect(() => {
+    if (gameOver && auth.currentUser) {
+      saveScore(auth.currentUser, score);
+    }
+  }, [gameOver]);
 
   return (
     <div className="min-h-screen w-full flex flex-col relative game-container bg-background text-white">
@@ -62,7 +89,12 @@ const Game = () => {
               <ShieldCheck className="w-10 h-10 text-game-cyan" />
             </div>
             <p className="text-lg mb-2">Your final score</p>
-            <p className="text-4xl font-bold mb-6 text-game-cyan">{score}</p>
+            <p className="text-4xl font-bold mb-2 text-game-cyan">{score}</p>
+            {bestScore !== null && (
+              <p className="text-sm text-muted-foreground mb-4">
+                Your best score: <span className="font-semibold">{bestScore}</span>
+              </p>
+            )}
             <button
               onClick={restart}
               className="w-full py-3 px-6 bg-game-cyan text-white rounded-full font-medium hover:bg-opacity-90 transition-all"
@@ -86,11 +118,8 @@ const Game = () => {
                     dragConstraints={{ top: 0, bottom: 0 }}
                     dragElastic={0.5}
                     onDragEnd={(_, info) => {
-                      if (info.offset.y < -100) {
-                        handleSwipe(-1); // up = safe
-                      } else if (info.offset.y > 100) {
-                        handleSwipe(1); // down = fraud
-                      }
+                      if (info.offset.y < -100) handleSwipe(-1); // up = safe
+                      else if (info.offset.y > 100) handleSwipe(1); // down = fraud
                     }}
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ duration: 0.3 }}
@@ -100,8 +129,7 @@ const Game = () => {
             </div>
 
             <p className="text-sm text-muted-foreground mt-4">
-              Swipe <span className="text-green-400">up</span> for Safe,{" "}
-              <span className="text-red-400">down</span> for Fraud
+              Swipe <span className="text-green-400">up</span> for Safe, <span className="text-red-400">down</span> for Fraud
             </p>
           </>
         )}

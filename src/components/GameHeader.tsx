@@ -29,7 +29,7 @@ const GameHeader = ({ currentScore = 0, className, showScore = true }: GameHeade
           <Trophy className="text-yellow-400 w-4 h-4" />
         </Link>
         
-        <Link to="/profile" className="flex items-center justify-center w-8 h-8 bg-accent/30 rounded-full hover:bg-accent/50 transition-colors">
+        <Link to="/" className="flex items-center justify-center w-8 h-8 bg-accent/30 rounded-full hover:bg-accent/50 transition-colors">
           <User className="text-white w-4 h-4" />
         </Link>
       </div>
