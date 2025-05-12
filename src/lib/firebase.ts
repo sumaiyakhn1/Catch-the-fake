@@ -6,13 +6,13 @@ import { getAnalytics } from "firebase/analytics";
 
 // Paste your config from Firebase Console here
 const firebaseConfig = {
-    apiKey: "AIzaSyAc4ywehLP0XPWA3wv5GCfEbEGfkl34Tp4",
-    authDomain: "catch-the-fake-15e5e.firebaseapp.com",
-    projectId: "catch-the-fake-15e5e",
-    storageBucket: "catch-the-fake-15e5e.firebasestorage.app",
-    messagingSenderId: "726408513077",
-    appId: "1:726408513077:web:fbbb4a0bc9552dd729537c",
-    measurementId: "G-MH9NC7BRZC"
+    apiKey: "AIzaSyB-gHHe5mhDgvbnqsSL1bYWzEMyO-TtOws",
+    authDomain: "fake-or-safe.firebaseapp.com",
+    projectId: "fake-or-safe",
+    storageBucket: "fake-or-safe.firebasestorage.app",
+    messagingSenderId: "851070454054",
+    appId: "1:851070454054:web:fb4cc6119906bcc99199e7",
+   
   };
 
 const app = initializeApp(firebaseConfig);
