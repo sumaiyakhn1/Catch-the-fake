@@ -15,6 +15,8 @@ type ScoreEntry = {
   createdAt: { seconds: number };
 };
 
+// ...imports remain the same
+
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState<ScoreEntry[]>([]);
   const [timeFrame, setTimeFrame] = useState<"all" | "monthly" | "weekly">("all");
@@ -49,7 +51,6 @@ const Leaderboard = () => {
         return true;
       });
 
-      // Keep only the best score per user
       const bestScoresMap = new Map<string, ScoreEntry>();
       timeFiltered.forEach((entry) => {
         const existing = bestScoresMap.get(entry.uid);
@@ -66,43 +67,46 @@ const Leaderboard = () => {
   }, [timeFrame]);
 
   return (
-    <div className="min-h-screen w-full flex flex-col game-container">
+    <div className="min-h-screen w-full flex flex-col game-container px-4 sm:px-6 lg:px-8">
       <GameHeader showScore={false} />
 
       <div className="flex-1 flex flex-col items-center p-4 relative">
         <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-          <TechCircle className="w-[80vh] h-[80vh] opacity-20" />
+          <TechCircle className="w-[80vh] h-[80vh] max-w-full max-h-full opacity-20" />
         </div>
 
         <div className="w-full max-w-3xl z-10 flex flex-col items-center mt-4">
-          <Link to="/game" className="self-start mb-4 flex items-center text-muted-foreground hover:text-white transition-colors">
+          <Link
+            to="/game"
+            className="self-start mb-4 flex items-center text-muted-foreground hover:text-white transition-colors text-sm"
+          >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Game
           </Link>
 
           <Card className="w-full bg-card/60 backdrop-blur-md border border-border/50">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <CardTitle className="text-xl font-bold flex items-center">
                 <Trophy className="text-yellow-400 w-5 h-5 mr-2" />
                 Leaderboard
               </CardTitle>
 
-              <div className="flex bg-accent/30 rounded-lg">
+              <div className="flex bg-accent/30 rounded-lg overflow-hidden text-xs sm:text-sm">
                 <button
                   onClick={() => setTimeFrame("all")}
-                  className={`px-3 py-1 text-sm rounded-lg ${timeFrame === "all" ? "bg-accent text-white" : "text-muted-foreground"}`}
+                  className={`px-3 py-1 ${timeFrame === "all" ? "bg-accent text-white" : "text-muted-foreground"}`}
                 >
                   All Time
                 </button>
                 <button
                   onClick={() => setTimeFrame("monthly")}
-                  className={`px-3 py-1 text-sm rounded-lg ${timeFrame === "monthly" ? "bg-accent text-white" : "text-muted-foreground"}`}
+                  className={`px-3 py-1 ${timeFrame === "monthly" ? "bg-accent text-white" : "text-muted-foreground"}`}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setTimeFrame("weekly")}
-                  className={`px-3 py-1 text-sm rounded-lg ${timeFrame === "weekly" ? "bg-accent text-white" : "text-muted-foreground"}`}
+                  className={`px-3 py-1 ${timeFrame === "weekly" ? "bg-accent text-white" : "text-muted-foreground"}`}
                 >
                   Weekly
                 </button>
@@ -110,13 +114,13 @@ const Leaderboard = () => {
             </CardHeader>
 
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {leaderboardData.map((player, index) => {
                   const avatarUrl = `https://api.dicebear.com/7.x/personas/svg?seed=${player.name}`;
                   return (
                     <div
                       key={player.id}
-                      className={`flex items-center p-3 rounded-lg ${
+                      className={`flex items-center p-3 rounded-lg text-sm sm:text-base ${
                         index === 0
                           ? "bg-yellow-400/20 border border-yellow-400/30"
                           : index === 1
@@ -127,16 +131,16 @@ const Leaderboard = () => {
                       } animate-slide-in`}
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/50 text-white font-bold mr-3">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-accent/50 text-white font-bold mr-2 sm:mr-3">
                         {index + 1}
                       </div>
 
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-accent/30 mr-3 flex-shrink-0">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-accent/30 mr-2 sm:mr-3 flex-shrink-0">
                         <img src={avatarUrl} alt={player.name} className="w-full h-full object-cover" />
                       </div>
 
-                      <div className="flex-1">
-                        <h3 className="font-medium">{player.name}</h3>
+                      <div className="flex-1 truncate">
+                        <h3 className="font-medium truncate">{player.name}</h3>
                       </div>
 
                       <div className="flex items-center">

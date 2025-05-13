@@ -60,7 +60,7 @@ const Game = () => {
     setGameOver(false);
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchBestScore = async () => {
       if (auth.currentUser) {
         const best = await getUserBestScore(auth.currentUser);
@@ -114,13 +114,13 @@ const Game = () => {
               <AnimatePresence>
                 {cards.length > 0 && (
                   <motion.img
-                    key={cards[0].id}
-                    src={cards[0].imageUrl}
+                    key={cards[0].id}          //card id as a prop
+                    src={cards[0].imageUrl} //display current card
                     className="absolute w-full h-full object-cover rounded-xl shadow-lg"
                     initial={{ y: 0, opacity: 1 }}
-                    drag="y"
-                    dragConstraints={{ top: 0, bottom: 0 }}
-                    dragElastic={0.5}
+                    drag="y" // in only vertical direction
+                    dragConstraints={{ top: 0, bottom: 0 }} //visually dont let move
+                    dragElastic={0.5} //for real feel
                     onDragEnd={(_, info) => {
                       if (info.offset.y < -100) handleSwipe(-1); // up = safe
                       else if (info.offset.y > 100) handleSwipe(1); // down = fraud
