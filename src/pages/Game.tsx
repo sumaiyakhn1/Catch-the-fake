@@ -81,9 +81,9 @@ const Game = () => {
       <GameHeader currentScore={score} />
 
       {/* Background Tech Circle */}
-      <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-0">
-        <TechCircle className="w-[80vh] h-[80vh] opacity-20" />
-      </div>
+      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+             <TechCircle className="w-[120vh] h-[120vh] opacity-20" />
+           </div>
 
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
         {gameOver ? (
