@@ -14,6 +14,10 @@ const mockCards = [
   { id: 4, isFraud: false, imageUrl: "/assets/img4.jpeg" },
   { id: 5, isFraud: false, imageUrl: "/assets/img5.jpg" },
   { id: 6, isFraud: false, imageUrl: "/assets/img6.jpeg" },
+  { id: 7, isFraud: true, imageUrl: "/assets/img7.webp" },
+  { id: 8, isFraud: false, imageUrl: "/assets/img8.jpg" },
+  { id: 9, isFraud: true, imageUrl: "/assets/img9.jpg" },
+  { id: 10, isFraud: false, imageUrl: "/assets/img10.jpg" },
 ];
 
 
